@@ -1,13 +1,13 @@
 // import * as cdk from 'aws-cdk-lib';
 // import { Template } from 'aws-cdk-lib/assertions';
-// import * as AuroraWatchers from '../lib/aurora-watchers-stack';
+// import * as AurorasWatch from '../lib/auroras-watch-stack';
 
 // example test. To run these tests, uncomment this file along with the
 // example resource in lib/aurora-watchers-stack.ts
 test('SQS Queue Created', () => {
 //   const app = new cdk.App();
 //     // WHEN
-//   const stack = new AuroraWatchers.AuroraWatchersStack(app, 'MyTestStack');
+//   const stack = new AurorasWatch.AurorasWatchStack(app, 'MyTestStack');
 //     // THEN
 //   const template = Template.fromStack(stack);
 
