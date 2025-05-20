@@ -48,11 +48,13 @@ export class AurorasWatchStack extends cdk.Stack {
       description: 'This service allows users to subscribe and unsubscribe from email deliveries.',
     });
 
-    // Create a resource for subscriptions
-    const subscriptions = api.root.addResource('subscriptions');
-    
-    // Set up the subscription Lambda as the integration for the POST method
-    subscriptions.addMethod('POST', new apigateway.LambdaIntegration(subscriptionLambda));
-    subscriptions.addMethod('DELETE', new apigateway.LambdaIntegration(subscriptionLambda));
+    const subscribe = api.root.addResource('subscribe');
+    subscribe.addMethod('GET', new apigateway.LambdaIntegration(subscriptionLambda));
+
+    const unsubscribe = api.root.addResource('unsubscribe');
+    unsubscribe.addMethod('GET', new apigateway.LambdaIntegration(subscriptionLambda));
+
+    const confirmSubscription = api.root.addResource('confirm');
+    confirmSubscription.addMethod('GET', new apigateway.LambdaIntegration(subscriptionLambda));
   }
 }
