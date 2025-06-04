@@ -14,21 +14,34 @@ export class AurorasWatchStack extends cdk.Stack {
       partitionKey: { name: 'email', type: dynamodb.AttributeType.STRING },
     });
 
-    const emailLambda = new NodejsFunction(this, "emaillambda", {
+    // Global Secondary Index for confirmation_uuid
+    emailTable.addGlobalSecondaryIndex({
+      indexName: 'ConfirmationUuidIndex',
+      partitionKey: {
+        name: 'confirmation_uuid',
+        type: dynamodb.AttributeType.STRING,
+      },
+    });
+
+    // Global Secondary Index for unsubscription_uuid
+    emailTable.addGlobalSecondaryIndex({
+      indexName: 'UnsubscriptionUuidIndex',
+      partitionKey: {
+        name: 'unsubscription_uuid',
+        type: dynamodb.AttributeType.STRING,
+      },
+    });
+
+    const emailLambda = new NodejsFunction(this, "emailLambda", {
       environment: {
         EMAIL_TABLE_NAME: emailTable.tableName,
       },
       timeout: cdk.Duration.minutes(15),
     });
-
-    // Allow emailLambda to call ssm:GetParameter on the icloud_smtp_pass parameter
     emailLambda.addToRolePolicy(new iam.PolicyStatement({
       actions: ['ssm:GetParameter'],
       resources: ['arn:aws:ssm:*:*:parameter/icloud_smtp_pass'],
     }));
-
-
-    // Grant emailLambda permissions to read from the DynamoDB table
     emailTable.grantReadData(emailLambda);
 
     // Create a Lambda function for subscribing and unsubscribing users
@@ -38,8 +51,10 @@ export class AurorasWatchStack extends cdk.Stack {
       },
       timeout: cdk.Duration.minutes(5),
     });
-
-    // Grant subscriptionLambda permissions to read and write to the DynamoDB table
+    subscriptionLambda.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['ssm:GetParameter'],
+      resources: ['arn:aws:ssm:*:*:parameter/icloud_smtp_pass'],
+    }));
     emailTable.grantReadWriteData(subscriptionLambda);
 
     // Create an API Gateway

@@ -12,6 +12,8 @@ To deploy this application:
 
 ## State of Subscriptions
 
+The flow below describes the state transitions for users registering to the service.
+
 ```mermaid
 stateDiagram-v2
     [*] --> requested : /subscribe
